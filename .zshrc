@@ -4,6 +4,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
 fi
 
+eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
 
 # aliases
