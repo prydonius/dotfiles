@@ -23,4 +23,4 @@ alias vi="nvim"
 alias vim="nvim"
 alias cat="bat"
 alias pc="process-compose"
-alias fixssh="eval $(tmux showenv -s SSH_AUTH_SOCK)"
+alias fixssh='eval $(tmux showenv -s SSH_AUTH_SOCK)'
