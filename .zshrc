@@ -1,3 +1,5 @@
+autoload -U compinit; compinit
+
 # history
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
@@ -17,6 +19,7 @@ fi
 eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
 source <(fzf --zsh)
+eval "$(sheldon source)"
 
 # aliases
 alias vi="nvim"
