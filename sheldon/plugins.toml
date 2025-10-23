@@ -14,10 +14,6 @@ shell = "zsh"
 
 [plugins]
 
-[plugins.zsh-autosuggestions]
-github = "zsh-users/zsh-autosuggestions"
-use = ["{{ name }}.zsh"]
-
 [plugins.autojump]
 github = "wting/autojump"
 dir = "bin"
@@ -28,6 +24,9 @@ apply = [
 
 [plugins.zsh-syntax-highlighting]
 github = "zsh-users/zsh-syntax-highlighting"
+
+[plugins.zsh-autocomplete]
+github = "marlonrichert/zsh-autocomplete"
 
 # For example:
 #

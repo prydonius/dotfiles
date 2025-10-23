@@ -1,5 +1,3 @@
-autoload -U compinit; compinit
-
 # history
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
@@ -20,6 +18,11 @@ eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
 source <(fzf --zsh)
 eval "$(sheldon source)"
+
+# zsh-autocomplete
+# cycle through completions
+bindkey              '^I'         menu-complete
+bindkey "$terminfo[kcbt]" reverse-menu-complete
 
 # aliases
 alias vi="nvim"
