@@ -8,6 +8,10 @@ export EDITOR="vim"
 export VISUAL="vim"
 bindkey -e # disable vi-keybindings in prompt
 
+# better left<->right navigation
+autoload -U select-word-style
+select-word-style bash
+
 # mac specific
 if [[ "$OSTYPE" == "darwin"* ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -20,9 +24,12 @@ source <(fzf --zsh)
 eval "$(sheldon source)"
 
 # zsh-autocomplete
-# cycle through completions
-bindkey              '^I'         menu-complete
-bindkey "$terminfo[kcbt]" reverse-menu-complete
+# Tab and Shift-tab go to the menu and cycle
+bindkey              '^I' menu-select
+bindkey "$terminfo[kcbt]" menu-select
+bindkey -M menuselect              '^I'         menu-complete
+bindkey -M menuselect "$terminfo[kcbt]" reverse-menu-complete
+
 # history
 bindkey -M emacs \
     "^[p"   .history-search-backward \
