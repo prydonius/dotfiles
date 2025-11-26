@@ -3,6 +3,7 @@ HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
 SAVEHIST=50000
 setopt share_history
+setopt hist_ignore_all_dups
 
 export EDITOR="vim"
 export VISUAL="vim"
@@ -14,8 +15,11 @@ select-word-style bash
 
 # mac specific
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-    export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+  export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
+else if [[ -f /etc/nixos ]]
+  # manually managed completions dir
+  fpath=("/home/adnan/.site-functions" $fpath)
 fi
 
 eval "$(direnv hook zsh)"
@@ -64,12 +68,21 @@ alias cat="bat"
 alias fixssh='eval $(tmux showenv -s SSH_AUTH_SOCK)'
 
 # abbrs
+abbr -q ga="git add"
 abbr -q gco="git checkout"
 abbr -q gup="git pull --rebase"
 abbr -q gst="git status"
+abbr -q gcom="git checkout main"
+abbr -q gfom="git fetch origin main:main"
 abbr -q gcmod="git commit -a --amend"
 abbr -q gcam="git commit -am"
 abbr -q -g ggp="git push"
+
 abbr -q pc="process-compose"
 abbr -q pcg="process-compose -p 11100"
 abbr -q pcf="process-compose -p 11000"
+
+abbr -q k="kubectl"
+abbr -q kns="kubens"
+abbr -q kctx="kubectx"
+abbr -q -g bml="bat -l yaml"
