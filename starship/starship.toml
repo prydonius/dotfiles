@@ -66,10 +66,18 @@ style = "bg:#212736"
 format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
 
 [kubernetes]
-symbol = "☸ "
+symbol = "☸"
 style = "bg:#212736"
-format = '[[ $symbol ($context) ](fg:#769ff0 bg:#212736)]($style)'
+format = '[[ $symbol ($context/$namespace) ](fg:#769ff0 bg:#212736)]($style)'
 disabled = false
+
+[[kubernetes.contexts]]
+# Using capture groups
+# Contexts from GKE, AWS and other cloud providers usually carry additional information, like the region/zone.
+# The following entry matches on the GKE format (`gke_projectname_zone_cluster-name`)
+# and renames every matching kube context into a more readable format (`gke-cluster-name`):
+context_pattern = "gke_(?P<project>[\\w-]+)_.*_(?P<cluster>[\\w-]+)"
+context_alias = "$project/$cluster"
 
 [time]
 disabled = false
