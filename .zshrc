@@ -78,9 +78,10 @@ abbr -q gcmod="git commit -a --amend"
 abbr -q gcam="git commit -am"
 abbr -q -g ggp="git push"
 
-abbr -q pc="process-compose"
-abbr -q pcg="process-compose -p 11100"
-abbr -q pcf="process-compose -p 11000"
+abbr -q pc="process-compose -p 11000"
+abbr -q pcls="process-compose -p 11000 list -o wide"
+abbr -q pcl="process-compose -p 11000 process logs"
+abbr -q pcr="process-compose -p 11000 process restart"
 
 abbr -q k="kubectl"
 abbr -q kns="kubens"
