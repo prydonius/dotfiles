@@ -33,3 +33,5 @@ set termguicolors
 set background=dark
 colorscheme solarized8
 
+" fix Y to yank the whole line including newline
+nnoremap Y yy

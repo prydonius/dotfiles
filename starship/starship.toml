@@ -3,8 +3,9 @@ $os\
 [](bg:#769ff0 fg:#a3aed2)\
 $directory\
 [](fg:#769ff0 bg:#394260)\
-$git_branch\
-$git_status\
+${custom.jj}\
+${custom.git_branch}\
+${custom.git_status}\
 [](fg:#394260 bg:#212736)\
 $nodejs\
 $rust\
@@ -36,14 +37,48 @@ truncation_symbol = "…/"
 "Music" = " "
 "Pictures" = " "
 
+# jj (Jujutsu) VCS support
+[custom.jj]
+description = "The current jj status"
+detect_folders = [".jj"]
+symbol = "󰜛"
+style = "bg:#394260"
+command = '''
+jj log --revisions @ --no-graph --ignore-working-copy --color never --limit 1 --template '
+  separate(" ",
+    change_id.shortest(4),
+    bookmarks.map(|x| truncate_end(10, x.name(), "…")).join(" "),
+    if(conflict, "💥"),
+    if(divergent, "🚧"),
+    if(empty, "(empty)", truncate_end(24, description.first_line(), "…")),
+  )
+'
+'''
+format = '[[ $symbol $output ](fg:#769ff0 bg:#394260)]($style)'
+
+# Disable built-in git modules (we use custom ones that hide in jj repos)
 [git_branch]
+disabled = true
 symbol = ""
 style = "bg:#394260"
 format = '[[ $symbol $branch ](fg:#769ff0 bg:#394260)]($style)'
 
 [git_status]
+disabled = true
 style = "bg:#394260"
 format = '[[($all_status$ahead_behind )](fg:#769ff0 bg:#394260)]($style)'
+
+[custom.git_branch]
+when = "! jj --ignore-working-copy root"
+command = "starship module git_branch"
+description = "Only show git_branch if we're not in a jj repo"
+format = "$output"
+
+[custom.git_status]
+when = "! jj --ignore-working-copy root"
+command = "starship module git_status"
+description = "Only show git_branch if we're not in a jj repo"
+format = "$output"
 
 [nodejs]
 symbol = ""

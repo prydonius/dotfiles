@@ -20,6 +20,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 else if [[ -f /etc/nixos ]]
   # manually managed completions dir
   fpath=("/home/adnan/.site-functions" $fpath)
+  export PATH=$HOME/go/bin:"$PATH"
 fi
 
 eval "$(direnv hook zsh)"
@@ -84,6 +85,7 @@ abbr -q pcl="process-compose -p 11000 process logs"
 abbr -q pcr="process-compose -p 11000 process restart"
 
 abbr -q k="kubectl"
+abbr -q kpf="kubectl port-forward"
 abbr -q kns="kubens"
 abbr -q kctx="kubectx"
 abbr -q -g bml="bat -l yaml"
