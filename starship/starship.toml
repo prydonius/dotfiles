@@ -3,7 +3,7 @@ $os\
 [](bg:#769ff0 fg:#a3aed2)\
 $directory\
 [](fg:#769ff0 bg:#394260)\
-${custom.jj}\
+${custom.jj}${custom.jj_desc}\
 ${custom.git_branch}\
 ${custom.git_status}\
 [](fg:#394260 bg:#212736)\
@@ -39,22 +39,32 @@ truncation_symbol = "…/"
 
 # jj (Jujutsu) VCS support
 [custom.jj]
-description = "The current jj status"
+description = "The current jj change id and status"
 detect_folders = [".jj"]
 symbol = "󰜛"
 style = "bg:#394260"
 command = '''
 jj log --revisions @ --no-graph --ignore-working-copy --color never --limit 1 --template '
   separate(" ",
-    change_id.shortest(4),
-    bookmarks.map(|x| truncate_end(10, x.name(), "…")).join(" "),
+    change_id.shortest(4) ++ if(bookmarks.filter(|x| !x.synced()), "*", ""),
     if(conflict, "💥"),
     if(divergent, "🚧"),
-    if(empty, "(empty)", truncate_end(24, description.first_line(), "…")),
+    "✎",
   )
 '
 '''
 format = '[[ $symbol $output ](fg:#769ff0 bg:#394260)]($style)'
+
+[custom.jj_desc]
+description = "The current jj description"
+detect_folders = [".jj"]
+style = "bg:#394260"
+command = '''
+jj log --revisions @ --no-graph --ignore-working-copy --color never --limit 1 --template '
+  if(empty, "(empty)", truncate_end(24, description.first_line(), "…"))
+'
+'''
+format = '[[($output) ](fg:#a0a9cb bg:#394260)]($style)'
 
 # Disable built-in git modules (we use custom ones that hide in jj repos)
 [git_branch]
