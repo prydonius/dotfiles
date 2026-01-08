@@ -46,7 +46,7 @@ style = "bg:#394260"
 command = '''
 jj log --revisions @ --no-graph --ignore-working-copy --color never --limit 1 --template '
   separate(" ",
-    change_id.shortest(4) ++ if(bookmarks.filter(|x| !x.synced()), "*", ""),
+    change_id.shortest(1) ++ if(bookmarks.filter(|x| !x.synced()), "*", ""),
     if(conflict, "💥"),
     if(divergent, "🚧"),
     "✎",
