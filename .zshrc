@@ -5,6 +5,7 @@ SAVEHIST=50000
 setopt share_history
 setopt hist_ignore_all_dups
 
+
 export EDITOR="vim"
 export VISUAL="vim"
 bindkey -e # disable vi-keybindings in prompt
@@ -21,6 +22,8 @@ else if [[ -f /etc/nixos ]]
   # manually managed completions dir
   fpath=("/home/adnan/.site-functions" $fpath)
   export PATH=$HOME/go/bin:"$PATH"
+  # fix ssh agent forwarding - symlink setup in sshrc
+  export SSH_AUTH_SOCK=$HOME/.ssh/ssh_auth_sock
 fi
 
 eval "$(direnv hook zsh)"
