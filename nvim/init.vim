@@ -21,7 +21,7 @@ set timeoutlen=500       " Faster key sequences
 
 call plug#begin()
 
-Plug 'lifepillar/vim-solarized8'
+Plug 'maxmx03/solarized.nvim'
 Plug 'tpope/vim-sleuth'
 
 call plug#end()
@@ -31,7 +31,7 @@ set termguicolors
 
 " Set the colorscheme
 set background=dark
-colorscheme solarized8
+colorscheme solarized
 
 " fix Y to yank the whole line including newline
 nnoremap Y yy
