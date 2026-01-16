@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": "allow",
+    "glob": "allow",
+    "bash": {
+      "*": "allow",
+      "rm *": "ask",
+      "mv *": "ask",
+      "cp *": "ask",
+      "chmod *": "ask",
+      "chown *": "ask",
+      "sudo *": "ask",
+      "jj git *": "ask"
+    }
+  }
+}
