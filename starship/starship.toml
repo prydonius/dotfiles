@@ -40,7 +40,7 @@ truncation_symbol = "…/"
 # jj (Jujutsu) VCS support
 [custom.jj]
 description = "The current jj change id and status"
-detect_folders = [".jj"]
+when = "jj --ignore-working-copy root"
 symbol = "󰜛"
 style = "bg:#394260"
 command = '''
@@ -57,7 +57,7 @@ format = '[[ $symbol $output ](fg:#769ff0 bg:#394260)]($style)'
 
 [custom.jj_desc]
 description = "The current jj description"
-detect_folders = [".jj"]
+when = "jj --ignore-working-copy root"
 style = "bg:#394260"
 command = '''
 jj log --revisions @ --no-graph --ignore-working-copy --color never --limit 1 --template '
