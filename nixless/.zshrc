@@ -18,7 +18,7 @@ select-word-style bash
 if [[ "$OSTYPE" == "darwin"* ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
   export PATH=/opt/homebrew/share/google-cloud-sdk/bin:"$PATH"
-else if [[ -f /etc/nixos ]]
+elif [[ -d /etc/nixos ]]; then
   # manually managed completions dir
   fpath=("/home/adnan/.site-functions" $fpath)
   export PATH=$HOME/go/bin:"$PATH"
