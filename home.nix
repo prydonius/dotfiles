@@ -258,11 +258,10 @@ in
     # Read the existing init.vim configuration
     extraConfig = builtins.readFile ./nvim/init.vim;
     
-    # Plugins managed by Nix (optional - you can also keep vim-plug)
+    # Plugins managed by Nix
     plugins = with pkgs.vimPlugins; [
-      # Uncomment to have Nix manage plugins instead of vim-plug:
-      # vim-sleuth
-      # Add more plugins here
+      vim-sleuth
+      NeoSolarized
     ];
   };
 

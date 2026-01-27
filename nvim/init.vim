@@ -19,19 +19,14 @@ set undofile             " Persistent undo
 set updatetime=300       " Faster updates
 set timeoutlen=500       " Faster key sequences
 
-call plug#begin()
-
-Plug 'maxmx03/solarized.nvim'
-Plug 'tpope/vim-sleuth'
-
-call plug#end()
+" Plugins are managed by Nix in home.nix
 
 " Enable 24-bit color
 set termguicolors
 
 " Set the colorscheme
 set background=dark
-colorscheme solarized
+colorscheme NeoSolarized
 
 " fix Y to yank the whole line including newline
 nnoremap Y yy
