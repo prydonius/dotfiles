@@ -273,6 +273,38 @@ in
   programs.git.enable = true;
 
   #
+  # === Jujutsu ===
+  #
+  programs.jujutsu = {
+    enable = true;
+    settings = {
+      user = {
+        name = "Adnan Abdulhussein";
+        email = if username == "developer" then "adnan.abdulhussein@repl.it" else "adnan@prydoni.us";
+      };
+    };
+  };
+
+  programs.jjui = {
+    enable = true;
+    settings = {
+      theme = "solarized-dark";
+      custom_themes = {
+        solarized-dark = {
+          selected = { bg = "#002f3c"; fg = "#fdf6e3"; };
+          "revisions selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+          "revisions details selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+          "menu selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+          "confirmation selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+          "undo confirmation selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+          "revset completion selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+          "evolog selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+        };
+      };
+    };
+  };
+
+  #
   # === Symlinks for other config files ===
   #
   
