@@ -1,4 +1,4 @@
-{ config, pkgs, lib, system, ... }:
+{ config, pkgs, lib, system, username, ... }:
 
 let
   isDarwin = pkgs.stdenv.isDarwin;
@@ -9,8 +9,8 @@ let
 in
 {
   # Home Manager needs a bit of information about you and the paths it should manage
-  home.username = "adnan";
-  home.homeDirectory = if isDarwin then "/Users/adnan" else "/home/adnan";
+  home.username = username;
+  home.homeDirectory = if isDarwin then "/Users/${username}" else "/home/${username}";
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
@@ -191,7 +191,7 @@ in
           owner = "olets";
           repo = "zsh-abbr";
           rev = "v6.4.0";
-          sha256 = "sha256-ixCGJkdKJwgn0wz2cUKtm1s9RCPnjtODqttZ3qmCnys=";
+          sha256 = "sha256-lJnJ5H0j/ZEX3CVdfaVo+6eowOS28MIL0ykbjmEmXw4=";
         };
       }
     ];
