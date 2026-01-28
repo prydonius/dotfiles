@@ -338,4 +338,42 @@ in
     '';
     executable = true;
   };
+
+  #
+  # === DevVM Configuration (developer user on Linux only) ===
+  #
+  
+  # Activation script to deploy config to /etc/nixos and rebuild DevVM when changed
+  home.activation.rebuildDevvm = lib.mkIf (username == "developer" && isLinux) (
+    lib.hm.dag.entryAfter ["writeBoundary"] ''
+      SOURCE_CONFIG="${./devvm/configuration.nix}"
+      TARGET_CONFIG="/etc/nixos/configuration.nix"
+      HASH_FILE="$HOME/.local/state/devvm-last-rebuild-hash"
+      DEVVM_FLAKE="/etc/nixos"
+
+      # Only proceed if /etc/nixos exists (we're on a devvm)
+      if [ -d "$DEVVM_FLAKE" ] && [ -f "$TARGET_CONFIG" ]; then
+        CURRENT_HASH=$(${pkgs.coreutils}/bin/sha256sum "$SOURCE_CONFIG" | ${pkgs.coreutils}/bin/cut -d' ' -f1)
+        LAST_HASH=""
+        if [ -f "$HASH_FILE" ]; then
+          LAST_HASH=$(${pkgs.coreutils}/bin/cat "$HASH_FILE")
+        fi
+
+        if [ "$CURRENT_HASH" != "$LAST_HASH" ]; then
+          echo "DevVM config changed, updating /etc/nixos/configuration.nix..."
+          /run/wrappers/bin/sudo ${pkgs.coreutils}/bin/cp "$SOURCE_CONFIG" "$TARGET_CONFIG"
+          
+          echo "Rebuilding NixOS..."
+          if /run/wrappers/bin/sudo PATH="/run/current-system/sw/bin:$PATH" /run/current-system/sw/bin/nixos-rebuild switch --flake "$DEVVM_FLAKE#replit-devvm" > /tmp/devvm-rebuild.log 2>&1; then
+            ${pkgs.coreutils}/bin/mkdir -p "$(${pkgs.coreutils}/bin/dirname "$HASH_FILE")"
+            echo "$CURRENT_HASH" > "$HASH_FILE"
+            echo "DevVM rebuild complete."
+          else
+            echo "DevVM rebuild failed. Check /tmp/devvm-rebuild.log for details."
+            ${pkgs.coreutils}/bin/cat /tmp/devvm-rebuild.log
+          fi
+        fi
+      fi
+    ''
+  );
 }
