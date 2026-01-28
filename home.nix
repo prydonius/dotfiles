@@ -1,4 +1,4 @@
-{ config, pkgs, lib, system, username, ... }:
+{ config, pkgs, lib, system, username, jj-github-pkg, ... }:
 
 let
   isDarwin = pkgs.stdenv.isDarwin;
@@ -49,6 +49,7 @@ in
     
     # Other
     jujutsu  # jj version control
+    jj-github-pkg  # jj GitHub integration
   ];
 
   #

@@ -7,9 +7,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    jj-github = {
+      url = "github:cbrewster/jj-github";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, ... }:
+  outputs = { nixpkgs, home-manager, jj-github, ... }:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
@@ -20,6 +24,7 @@
         modules = [ ./home.nix ];
         extraSpecialArgs = {
           inherit system username;
+          jj-github-pkg = jj-github.packages.${system}.default;
         };
       };
     in
