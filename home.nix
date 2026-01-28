@@ -185,13 +185,13 @@ in
         };
       }
       {
-        # zsh-abbr fetched from GitHub to avoid unfree nixpkgs version
+        # zsh-abbr fetched from GitHub with submodules (includes zsh-job-queue dependency)
         name = "zsh-abbr";
-        src = pkgs.fetchFromGitHub {
-          owner = "olets";
-          repo = "zsh-abbr";
+        src = pkgs.fetchgit {
+          url = "https://github.com/olets/zsh-abbr.git";
           rev = "v6.4.0";
-          sha256 = "sha256-lJnJ5H0j/ZEX3CVdfaVo+6eowOS28MIL0ykbjmEmXw4=";
+          sha256 = "sha256-nfkXtRZ7CB/MnmzMe1ivKz26Vv5duP4zTAv7EZwpMTM=";
+          fetchSubmodules = true;
         };
       }
     ];
@@ -281,6 +281,17 @@ in
       user = {
         name = "Adnan Abdulhussein";
         email = if username == "developer" then "adnan.abdulhussein@repl.it" else "adnan@prydoni.us";
+      };
+      aliases = {
+        gh = ["util" "exec" "--" "jj-github"];
+        up = ["edit" "@-"];
+        down = ["edit" "@+"];
+      };
+      ui = {
+        conflict-marker-style = "git";
+      };
+      templates = {
+        git_push_bookmark = ''"adnan/push-" ++ change_id.short()'';
       };
     };
   };
