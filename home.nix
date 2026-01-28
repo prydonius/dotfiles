@@ -343,6 +343,38 @@ in
   #
   # === DevVM Configuration (developer user on Linux only) ===
   #
+
+  # Convert HTTPS git origins to SSH format in ~/replit/* repos
+  home.activation.updateGitOrigins = lib.mkIf (username == "developer" && isLinux) (
+    lib.hm.dag.entryAfter ["writeBoundary"] ''
+      REPOS_DIR="$HOME/replit"
+      if [ -d "$REPOS_DIR" ]; then
+        for repo in "$REPOS_DIR"/*; do
+          if [ -d "$repo/.git" ] || [ -f "$repo/.git" ]; then
+            CURRENT_URL=$(${pkgs.git}/bin/git -C "$repo" remote get-url origin 2>/dev/null || true)
+            if [ -n "$CURRENT_URL" ]; then
+              # Convert HTTPS to SSH format: https://github.com/user/repo -> git@github.com:user/repo.git
+              NEW_URL=$(echo "$CURRENT_URL" | ${pkgs.gnused}/bin/sed -E '
+                # Only process if it looks like HTTPS
+                /^https:\/\// {
+                  # Remove https:// prefix, convert to git@ format
+                  s|^https://([^/]+)/(.+?)(.git)?$|git@\1:\2.git|
+                }
+              ')
+              # Also handle URLs that already have SSH format but missing .git
+              if echo "$CURRENT_URL" | ${pkgs.gnugrep}/bin/grep -qE '^git@' && ! echo "$CURRENT_URL" | ${pkgs.gnugrep}/bin/grep -qE '\.git$'; then
+                NEW_URL="$CURRENT_URL.git"
+              fi
+              if [ "$CURRENT_URL" != "$NEW_URL" ] && [ -n "$NEW_URL" ]; then
+                echo "Updating origin for $(${pkgs.coreutils}/bin/basename "$repo"): $CURRENT_URL -> $NEW_URL"
+                ${pkgs.git}/bin/git -C "$repo" remote set-url origin "$NEW_URL"
+              fi
+            fi
+          fi
+        done
+      fi
+    ''
+  );
   
   # Activation script to deploy config to /etc/nixos and rebuild DevVM when changed
   home.activation.rebuildDevvm = lib.mkIf (username == "developer" && isLinux) (
