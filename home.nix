@@ -156,6 +156,9 @@ in
       abbr -q pcl="process-compose -p 11000 process logs"
       abbr -q pcr="process-compose -p 11000 process restart"
       
+      abbr -q jss="jj gh submit"
+      abbr -q jsy="jj gh sync"
+      
       abbr -q k="kubectl"
       abbr -q kpf="kubectl port-forward"
       abbr -q kns="kubens"
