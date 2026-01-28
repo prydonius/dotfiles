@@ -300,18 +300,15 @@ in
   programs.jjui = {
     enable = true;
     settings = {
-      theme = "solarized-dark";
-      custom_themes = {
-        solarized-dark = {
-          selected = { bg = "#002f3c"; fg = "#fdf6e3"; };
-          "revisions selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
-          "revisions details selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
-          "menu selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
-          "confirmation selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
-          "undo confirmation selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
-          "revset completion selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
-          "evolog selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
-        };
+      ui.colors = {
+        "selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+        "revisions selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+        "revisions details selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+        "menu selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+        "confirmation selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+        "undo confirmation selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+        "revset completion selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
+        "evolog selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
       };
     };
   };
