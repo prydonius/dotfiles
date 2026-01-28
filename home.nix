@@ -105,7 +105,12 @@ in
       # Manually managed completions dir
       fpath=("$HOME/.site-functions" $fpath)
       export PATH=$HOME/go/bin:"$PATH"
-      # Fix SSH agent forwarding - symlink setup in sshrc
+      
+      # Fix SSH agent forwarding for tmux (works with Tailscale SSH)
+      # Update the stable symlink on each shell start, then point to it
+      if [[ -n "$SSH_AUTH_SOCK" && "$SSH_AUTH_SOCK" != "$HOME/.ssh/ssh_auth_sock" ]]; then
+        ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
+      fi
       export SSH_AUTH_SOCK=$HOME/.ssh/ssh_auth_sock
       ''}
       
@@ -324,20 +329,6 @@ in
   xdg.configFile."opencode" = {
     source = ./opencode;
     recursive = true;
-  };
-
-  # SSH agent forwarding fix for tmux
-  # Creates a stable symlink so tmux sessions can find the agent socket
-  home.file.".ssh/rc" = {
-    text = ''
-      #!/bin/bash
-
-      # Fix SSH auth socket location so agent forwarding works with tmux.
-      if test "$SSH_AUTH_SOCK" ; then
-        ln -sf $SSH_AUTH_SOCK ~/.ssh/ssh_auth_sock
-      fi
-    '';
-    executable = true;
   };
 
   #
