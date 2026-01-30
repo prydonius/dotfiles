@@ -28,6 +28,13 @@ fi
 
 eval "$(direnv hook zsh)"
 eval "$(starship init zsh)"
+
+# fzf setup - use --tmux if in tmux, otherwise disable height for compatibility
+if [[ -n "$TMUX" ]]; then
+  export FZF_DEFAULT_OPTS="--tmux 80%"
+else
+  export FZF_DEFAULT_OPTS="--no-height"
+fi
 source <(fzf --zsh)
 eval "$(sheldon source)"
 
@@ -37,6 +44,9 @@ bindkey              '^I' menu-select
 bindkey "$terminfo[kcbt]" menu-select
 bindkey -M menuselect              '^I'         menu-complete
 bindkey -M menuselect "$terminfo[kcbt]" reverse-menu-complete
+
+# Clear autosuggestions when completion menu is active
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(menu-select)
 
 # history
 bindkey -M emacs \

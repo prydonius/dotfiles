@@ -121,6 +121,9 @@ in
       bindkey -M menuselect              '^I'         menu-complete
       bindkey -M menuselect "$terminfo[kcbt]" reverse-menu-complete
       
+      # Clear autosuggestions when completion menu is active
+      ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(menu-select)
+      
       # History search keybindings
       bindkey -M emacs \
           "^[p"   .history-search-backward \
