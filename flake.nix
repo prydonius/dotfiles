@@ -11,9 +11,13 @@
       url = "github:cbrewster/jj-github";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    opencode = {
+      url = "github:anomalyco/opencode";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, jj-github, ... }:
+  outputs = { nixpkgs, home-manager, jj-github, opencode, ... }:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
@@ -25,6 +29,7 @@
         extraSpecialArgs = {
           inherit system username;
           jj-github-pkg = jj-github.packages.${system}.default;
+          opencode-pkg = opencode.packages.${system}.default;
         };
       };
     in

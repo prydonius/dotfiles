@@ -1,4 +1,4 @@
-{ config, pkgs, lib, system, username, jj-github-pkg, ... }:
+{ config, pkgs, lib, system, username, jj-github-pkg, opencode-pkg, ... }:
 
 let
   isDarwin = pkgs.stdenv.isDarwin;
@@ -50,6 +50,8 @@ in
     # Other
     jujutsu  # jj version control
     jj-github-pkg  # jj GitHub integration
+    opencode-pkg
+    tailscale
   ];
 
   #
@@ -252,6 +254,7 @@ in
   programs.tmux = {
     enable = true;
     shell = "${pkgs.zsh}/bin/zsh";
+    terminal = "tmux-256color";  # Proper terminal type for fzf height queries
     # Additional tmux config can be added here
     extraConfig = ''
       # Add any extra tmux configuration here
@@ -332,6 +335,44 @@ in
   xdg.configFile."opencode" = {
     source = ./opencode;
     recursive = true;
+  };
+
+  #
+  # === Systemd User Services (non-developer Linux users) ===
+  #
+  systemd.user.services = lib.mkIf (username != "developer" && isLinux) {
+    tailscaled = {
+      Unit = {
+        Description = "Tailscale daemon";
+        After = [ "network.target" ];
+      };
+      Service = {
+        ExecStart = "/run/wrappers/bin/sudo ${pkgs.tailscale}/bin/tailscaled";
+        Restart = "on-failure";
+        RestartSec = "5s";
+      };
+      Install = {
+        WantedBy = [ "default.target" ];
+      };
+    };
+
+    opencode-web = {
+      Unit = {
+        Description = "OpenCode web interface";
+        After = [ "network.target" "tailscaled.service" ];
+        Wants = [ "tailscaled.service" ];
+      };
+      Service = {
+        ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";  # Wait for tailscale to be ready
+        ExecStart = "${pkgs.bash}/bin/bash -c '${opencode-pkg}/bin/opencode web --port 4096 --hostname $(${pkgs.tailscale}/bin/tailscale ip -4)'";
+        Restart = "on-failure";
+        RestartSec = "5s";
+        Environment = "PATH=${pkgs.git}/bin:${pkgs.jujutsu}/bin";
+      };
+      Install = {
+        WantedBy = [ "default.target" ];
+      };
+    };
   };
 
   #
