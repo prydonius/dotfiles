@@ -174,6 +174,9 @@ in
       abbr -q kns="kubens"
       abbr -q kctx="kubectx"
       abbr -q -g bml="bat -l yaml"
+      
+      # Bind space to expand abbreviations
+      bindkey " " abbr-expand-and-insert
     '';
     
 
