@@ -46,6 +46,8 @@ in
     # Kubernetes tools
     kubectl
     kubectx
+    stern
+    k9s
     
     # Other
     jujutsu  # jj version control
