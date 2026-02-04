@@ -343,7 +343,7 @@ in
   #
   # === Systemd User Services (non-developer Linux users) ===
   #
-  systemd.user.services = lib.mkIf (username != "developer" && isLinux) {
+  systemd.user.services = lib.mkIf isLinux {
     tailscaled = {
       Unit = {
         Description = "Tailscale daemon";
@@ -370,7 +370,7 @@ in
         ExecStart = "${pkgs.bash}/bin/bash -c '${opencode-pkg}/bin/opencode web --port 4096 --hostname $(${pkgs.tailscale}/bin/tailscale ip -4)'";
         Restart = "on-failure";
         RestartSec = "5s";
-        Environment = "PATH=${pkgs.git}/bin:${pkgs.jujutsu}/bin";
+        Environment = "PATH=${config.home.profileDirectory}/bin:/run/current-system/sw/bin";
       };
       Install = {
         WantedBy = [ "default.target" ];
@@ -415,7 +415,7 @@ in
   );
   
   # Activation script to deploy config to /etc/nixos and rebuild DevVM when changed
-  home.activation.rebuildDevvm = lib.mkIf (username == "developer" && isLinux) (
+  home.activation.rebuildDevvm = lib.mkIf isLinux (
     lib.hm.dag.entryAfter ["writeBoundary"] ''
       SOURCE_CONFIG="${./devvm/configuration.nix}"
       TARGET_CONFIG="/etc/nixos/configuration.nix"
@@ -435,7 +435,14 @@ in
           /run/wrappers/bin/sudo ${pkgs.coreutils}/bin/cp "$SOURCE_CONFIG" "$TARGET_CONFIG"
           
           echo "Rebuilding NixOS..."
-          if /run/wrappers/bin/sudo PATH="/run/current-system/sw/bin:$PATH" /run/current-system/sw/bin/nixos-rebuild switch --flake "$DEVVM_FLAKE#replit-devvm" > /tmp/devvm-rebuild.log 2>&1; then
+          # Auto-detect the flake configuration name from available nixosConfigurations
+          FLAKE_NAME=$(${pkgs.nix}/bin/nix flake show "$DEVVM_FLAKE" --json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.nixosConfigurations | keys[0]')
+          if [ -z "$FLAKE_NAME" ] || [ "$FLAKE_NAME" = "null" ]; then
+            echo "Could not detect NixOS configuration name from flake"
+            exit 1
+          fi
+          echo "Using flake configuration: $FLAKE_NAME"
+          if /run/wrappers/bin/sudo PATH="/run/current-system/sw/bin:$PATH" /run/current-system/sw/bin/nixos-rebuild switch --flake "$DEVVM_FLAKE#$FLAKE_NAME" > /tmp/devvm-rebuild.log 2>&1; then
             ${pkgs.coreutils}/bin/mkdir -p "$(${pkgs.coreutils}/bin/dirname "$HASH_FILE")"
             echo "$CURRENT_HASH" > "$HASH_FILE"
             echo "DevVM rebuild complete."
