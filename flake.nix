@@ -35,8 +35,8 @@
     in
     {
       homeConfigurations = {
-        # Default configuration for adnan
-        "adnan" = mkHomeConfig "x86_64-linux" "adnan";
+        # Default configuration for adnan (auto-detects current system)
+        "adnan" = mkHomeConfig builtins.currentSystem "adnan";
         
         # System-specific configurations for adnan
         "adnan@x86_64-linux" = mkHomeConfig "x86_64-linux" "adnan";
