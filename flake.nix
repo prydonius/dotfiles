@@ -35,8 +35,8 @@
     in
     {
       homeConfigurations = {
-        # Default configuration for adnan (auto-detects current system)
-        "adnan" = mkHomeConfig builtins.currentSystem "adnan";
+        # NOTE: Use system-specific configs below (e.g., adnan@aarch64-darwin)
+        # There is no default "adnan" because flakes can't auto-detect the current system
         
         # System-specific configurations for adnan
         "adnan@x86_64-linux" = mkHomeConfig "x86_64-linux" "adnan";
