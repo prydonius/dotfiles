@@ -417,7 +417,8 @@ in
   );
   
   # Activation script to deploy config to /etc/nixos and rebuild DevVM when changed
-  home.activation.rebuildDevvm = lib.mkIf isLinux (
+  # Only runs for adnan user on Linux (not developer user)
+  home.activation.rebuildDevvm = lib.mkIf (username == "adnan" && isLinux) (
     lib.hm.dag.entryAfter ["writeBoundary"] ''
       SOURCE_CONFIG="${./devvm/configuration.nix}"
       TARGET_CONFIG="/etc/nixos/configuration.nix"
@@ -437,14 +438,7 @@ in
           /run/wrappers/bin/sudo ${pkgs.coreutils}/bin/cp "$SOURCE_CONFIG" "$TARGET_CONFIG"
           
           echo "Rebuilding NixOS..."
-          # Auto-detect the flake configuration name from available nixosConfigurations
-          FLAKE_NAME=$(${pkgs.nix}/bin/nix flake show "$DEVVM_FLAKE" --json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.nixosConfigurations | keys[0]')
-          if [ -z "$FLAKE_NAME" ] || [ "$FLAKE_NAME" = "null" ]; then
-            echo "Could not detect NixOS configuration name from flake"
-            exit 1
-          fi
-          echo "Using flake configuration: $FLAKE_NAME"
-          if /run/wrappers/bin/sudo PATH="/run/current-system/sw/bin:$PATH" /run/current-system/sw/bin/nixos-rebuild switch --flake "$DEVVM_FLAKE#$FLAKE_NAME" > /tmp/devvm-rebuild.log 2>&1; then
+          if /run/wrappers/bin/sudo PATH="/run/current-system/sw/bin:$PATH" /run/current-system/sw/bin/nixos-rebuild switch --flake "$DEVVM_FLAKE#devvm" > /tmp/devvm-rebuild.log 2>&1; then
             ${pkgs.coreutils}/bin/mkdir -p "$(${pkgs.coreutils}/bin/dirname "$HASH_FILE")"
             echo "$CURRENT_HASH" > "$HASH_FILE"
             echo "DevVM rebuild complete."
