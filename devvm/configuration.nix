@@ -2,8 +2,15 @@
 #
 # This file is automatically deployed by home-manager to /etc/nixos/configuration.nix
 # and triggers a nixos-rebuild when changed.
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
-  users.users.developer.shell = pkgs.zsh;
+  programs.zsh.enable = true;
+  environment.interactiveShellInit = lib.mkForce "";
+
+  users.users.adnan = {
+    isNormalUser = true;
+    shell = pkgs.zsh;
+    group = "users";
+  };
 }

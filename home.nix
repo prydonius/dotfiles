@@ -53,7 +53,6 @@ in
     jujutsu  # jj version control
     jj-github-pkg  # jj GitHub integration
     opencode-pkg
-    tailscale
   ];
 
   #
@@ -346,21 +345,6 @@ in
   # === Systemd User Services (non-developer Linux users) ===
   #
   systemd.user.services = lib.mkIf isLinux {
-    tailscaled = {
-      Unit = {
-        Description = "Tailscale daemon";
-        After = [ "network.target" ];
-      };
-      Service = {
-        ExecStart = "/run/wrappers/bin/sudo ${pkgs.tailscale}/bin/tailscaled";
-        Restart = "on-failure";
-        RestartSec = "5s";
-      };
-      Install = {
-        WantedBy = [ "default.target" ];
-      };
-    };
-
     opencode-web = {
       Unit = {
         Description = "OpenCode web interface";
@@ -369,7 +353,7 @@ in
       };
       Service = {
         ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";  # Wait for tailscale to be ready
-        ExecStart = "${pkgs.bash}/bin/bash -c '${opencode-pkg}/bin/opencode web --port 4096 --hostname $(${pkgs.tailscale}/bin/tailscale ip -4)'";
+        ExecStart = "${pkgs.bash}/bin/bash -c '${opencode-pkg}/bin/opencode web --port 4096 --hostname $(/run/current-system/sw/bin/tailscale ip -4)'";
         Restart = "on-failure";
         RestartSec = "5s";
         Environment = "PATH=${config.home.profileDirectory}/bin:/run/current-system/sw/bin";
