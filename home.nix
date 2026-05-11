@@ -53,6 +53,8 @@ in
     jujutsu  # jj version control
     jj-github-pkg  # jj GitHub integration
     opencode-pkg
+    claude-code
+    glow  # markdown reader
   ];
 
   #

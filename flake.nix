@@ -24,7 +24,13 @@
       
       # Helper to create a home configuration for a given system and username
       mkHomeConfig = system: username: home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfreePredicate = pkg:
+            builtins.elem (nixpkgs.lib.getName pkg) [
+              "claude-code"
+            ];
+        };
         modules = [ ./home.nix ];
         extraSpecialArgs = {
           inherit system username;
