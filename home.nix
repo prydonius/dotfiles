@@ -119,6 +119,11 @@ in
       export SSH_AUTH_SOCK=$HOME/.ssh/ssh_auth_sock
       ''}
       
+      # Disable slow dynamic completions for kubectl and gcloud
+      # Replaces their heavy completers with a basic one
+      compdef _default kubectl
+      compdef _default gcloud
+
       # zsh-autocomplete keybindings
       # Tab and Shift-tab go to the menu and cycle
       bindkey              '^I' menu-select
