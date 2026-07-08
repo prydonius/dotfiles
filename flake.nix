@@ -16,9 +16,12 @@
       url = "github:anomalyco/opencode/f97e115ee284e7f1291be868cd9d058f4ddaf4a2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, jj-github, opencode, ... }:
+  outputs = { nixpkgs, home-manager, jj-github, opencode, llm-agents, ... }:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
@@ -53,10 +56,6 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            config.allowUnfreePredicate = pkg:
-              builtins.elem (nixpkgs.lib.getName pkg) [
-                "claude-code"
-              ];
           };
           # The devvm's `developer` user gets opencode/claude-code installed via
           # other means, so skip building them here. Other users get the pinned
@@ -73,6 +72,8 @@
           extraSpecialArgs = {
             inherit system username opencode-pkg;
             jj-github-pkg = jj-github.packages.${system}.default;
+            claude-code-pkg = llm-agents.packages.${system}.claude-code;
+            codex-pkg = llm-agents.packages.${system}.codex;
           };
         };
     in

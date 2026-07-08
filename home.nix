@@ -1,4 +1,4 @@
-{ config, pkgs, lib, system, username, jj-github-pkg, opencode-pkg, ... }:
+{ config, pkgs, lib, system, username, jj-github-pkg, opencode-pkg, claude-code-pkg, codex-pkg, ... }:
 
 let
   isDarwin = pkgs.stdenv.isDarwin;
@@ -59,7 +59,8 @@ in
     glow  # markdown reader
   ] ++ lib.optionals (!isDeveloper) [
     opencode-pkg
-    claude-code
+    claude-code-pkg
+    codex-pkg
   ];
 
   #
