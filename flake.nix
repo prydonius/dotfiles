@@ -19,9 +19,12 @@
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
     };
+    zergrush = {
+      url = "https://flakehub.com/f/replit/zergrush/*";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, jj-github, opencode, llm-agents, ... }:
+  outputs = { nixpkgs, home-manager, jj-github, opencode, llm-agents, zergrush, ... }:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
@@ -66,11 +69,16 @@
             else if opencodeNodeModulesHashes.${system} != null
             then mkOpencodePkg pkgs system
             else opencode.packages.${system}.default;
+          # zergrush is macOS-only; null on Linux so home.nix can skip it.
+          zerg-pkg =
+            if nixpkgs.lib.hasSuffix "darwin" system
+            then zergrush.packages.${system}.zerg
+            else null;
         in home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [ ./home.nix ];
           extraSpecialArgs = {
-            inherit system username opencode-pkg;
+            inherit system username opencode-pkg zerg-pkg;
             jj-github-pkg = jj-github.packages.${system}.default;
             claude-code-pkg = llm-agents.packages.${system}.claude-code;
             codex-pkg = llm-agents.packages.${system}.codex;

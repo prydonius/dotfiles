@@ -1,4 +1,4 @@
-{ config, pkgs, lib, system, username, jj-github-pkg, opencode-pkg, claude-code-pkg, codex-pkg, ... }:
+{ config, pkgs, lib, system, username, jj-github-pkg, opencode-pkg, claude-code-pkg, codex-pkg, zerg-pkg, ... }:
 
 let
   isDarwin = pkgs.stdenv.isDarwin;
@@ -61,6 +61,8 @@ in
     opencode-pkg
     claude-code-pkg
     codex-pkg
+  ] ++ lib.optionals isDarwin [
+    zerg-pkg  # zergrush (macOS-only, from flakehub)
   ];
 
   #
