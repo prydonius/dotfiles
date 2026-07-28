@@ -57,6 +57,7 @@ in
     jujutsu  # jj version control
     jj-github-pkg  # jj GitHub integration
     glow  # markdown reader
+    cloudflared  # cloudflare tunnel client
   ] ++ lib.optionals (!isDeveloper) [
     claude-code-pkg
   ] ++ lib.optional (opencode-pkg != null) opencode-pkg
