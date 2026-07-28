@@ -1,4 +1,4 @@
-{ config, pkgs, lib, system, username, jj-github-pkg, opencode-pkg, claude-code-pkg, codex-pkg, zerg-pkg, ... }:
+{ config, pkgs, lib, system, username, jj-github-pkg, opencode-pkg, claude-code-pkg, zerg-pkg, ... }:
 
 let
   isDarwin = pkgs.stdenv.isDarwin;
@@ -58,10 +58,9 @@ in
     jj-github-pkg  # jj GitHub integration
     glow  # markdown reader
   ] ++ lib.optionals (!isDeveloper) [
-    opencode-pkg
     claude-code-pkg
-    codex-pkg
-  ] ++ lib.optionals isDarwin [
+  ] ++ lib.optional (opencode-pkg != null) opencode-pkg
+  ++ lib.optionals isDarwin [
     zerg-pkg  # zergrush (macOS-only, from flakehub)
   ];
 

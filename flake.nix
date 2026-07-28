@@ -64,14 +64,19 @@
           # other means, so skip building them here. Other users get the pinned
           # anomalyco fork, with the node_modules hash re-pinned to whatever the
           # current bun version produces.
+          isDarwinSystem = nixpkgs.lib.hasSuffix "darwin" system;
+          # The pinned fork's node_modules fails `bun install --frozen-lockfile`
+          # on darwin, and newer commits need bun 1.3.14 (nixpkgs has 1.3.13),
+          # so there's no working darwin build to pin to. Skip it there until
+          # bun 1.3.14 lands; null means home.nix leaves it out.
           opencode-pkg =
-            if username == "developer" then null
+            if username == "developer" || isDarwinSystem then null
             else if opencodeNodeModulesHashes.${system} != null
             then mkOpencodePkg pkgs system
             else opencode.packages.${system}.default;
           # zergrush is macOS-only; null on Linux so home.nix can skip it.
           zerg-pkg =
-            if nixpkgs.lib.hasSuffix "darwin" system
+            if isDarwinSystem
             then zergrush.packages.${system}.zerg
             else null;
         in home-manager.lib.homeManagerConfiguration {
@@ -81,7 +86,6 @@
             inherit system username opencode-pkg zerg-pkg;
             jj-github-pkg = jj-github.packages.${system}.default;
             claude-code-pkg = llm-agents.packages.${system}.claude-code;
-            codex-pkg = llm-agents.packages.${system}.codex;
           };
         };
     in
