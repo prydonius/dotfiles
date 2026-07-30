@@ -63,6 +63,7 @@ in
   ] ++ lib.optional (opencode-pkg != null) opencode-pkg
   ++ lib.optionals isDarwin [
     zerg-pkg  # zergrush (macOS-only, from flakehub)
+    zed-editor  # GUI editor; only useful on the desktop, not the headless devvms
   ];
 
   #
