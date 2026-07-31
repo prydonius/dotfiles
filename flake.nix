@@ -11,11 +11,6 @@
       url = "github:cbrewster/jj-github";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    opencode = {
-      # Pinned: later commits require bun 1.3.14 which is not yet in nixpkgs (latest unstable has 1.3.13).
-      url = "github:anomalyco/opencode/f97e115ee284e7f1291be868cd9d058f4ddaf4a2";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
     };
@@ -24,35 +19,10 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, jj-github, opencode, llm-agents, zergrush, ... }:
+  outputs = { nixpkgs, home-manager, jj-github, llm-agents, zergrush, ... }:
     let
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-
-      # The opencode flake pins node_modules hashes for a specific bun version.
-      # Bun's bun-install output can differ slightly across patch versions, so
-      # we re-pin the hashes here for the bun shipped with our nixpkgs revision.
-      # Run with --print-build-logs and update if a future nixpkgs/bun bump
-      # changes them again.
-      opencodeNodeModulesHashes = {
-        "x86_64-linux"   = "sha256-NhXGqdMenkVc6ux7KZCdVR1OWa2hzKKpCSE+NgNOlgQ=";
-        "aarch64-linux"  = null;
-        "aarch64-darwin" = null;
-        "x86_64-darwin"  = null;
-      };
-
-      mkOpencodePkg = pkgs: system:
-        let
-          src = opencode;
-          # Reconstruct the package using the flake's own nix expressions but
-          # with an overridden node_modules hash.
-          rev = src.shortRev or "dirty";
-          node_modules = pkgs.callPackage "${src}/nix/node_modules.nix" {
-            inherit rev;
-            hash = opencodeNodeModulesHashes.${system};
-          };
-        in
-          pkgs.callPackage "${src}/nix/opencode.nix" { inherit node_modules; };
 
       # Helper to create a home configuration for a given system and username
       mkHomeConfig = system: username:
@@ -60,20 +30,7 @@
           pkgs = import nixpkgs {
             inherit system;
           };
-          # The devvm's `developer` user gets opencode/claude-code installed via
-          # other means, so skip building them here. Other users get the pinned
-          # anomalyco fork, with the node_modules hash re-pinned to whatever the
-          # current bun version produces.
           isDarwinSystem = nixpkgs.lib.hasSuffix "darwin" system;
-          # The pinned fork's node_modules fails `bun install --frozen-lockfile`
-          # on darwin, and newer commits need bun 1.3.14 (nixpkgs has 1.3.13),
-          # so there's no working darwin build to pin to. Skip it there until
-          # bun 1.3.14 lands; null means home.nix leaves it out.
-          opencode-pkg =
-            if username == "developer" || isDarwinSystem then null
-            else if opencodeNodeModulesHashes.${system} != null
-            then mkOpencodePkg pkgs system
-            else opencode.packages.${system}.default;
           # zergrush is macOS-only; null on Linux so home.nix can skip it.
           zerg-pkg =
             if isDarwinSystem
@@ -83,7 +40,7 @@
           inherit pkgs;
           modules = [ ./home.nix ];
           extraSpecialArgs = {
-            inherit system username opencode-pkg zerg-pkg;
+            inherit system username zerg-pkg;
             jj-github-pkg = jj-github.packages.${system}.default;
             claude-code-pkg = llm-agents.packages.${system}.claude-code;
           };

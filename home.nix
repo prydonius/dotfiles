@@ -1,11 +1,11 @@
-{ config, pkgs, lib, system, username, jj-github-pkg, opencode-pkg, claude-code-pkg, zerg-pkg, ... }:
+{ config, pkgs, lib, system, username, jj-github-pkg, claude-code-pkg, zerg-pkg, ... }:
 
 let
   isDarwin = pkgs.stdenv.isDarwin;
   isLinux = pkgs.stdenv.isLinux;
 
-  # The devvm provisions opencode and claude-code for the `developer` user
-  # outside home-manager, so we skip them here.
+  # The devvm provisions claude-code for the `developer` user outside
+  # home-manager, so we skip it here.
   isDeveloper = username == "developer";
 
   # Path to this dotfiles directory (where this file lives)
@@ -60,8 +60,7 @@ in
     cloudflared  # cloudflare tunnel client
   ] ++ lib.optionals (!isDeveloper) [
     claude-code-pkg
-  ] ++ lib.optional (opencode-pkg != null) opencode-pkg
-  ++ lib.optionals isDarwin [
+  ] ++ lib.optionals isDarwin [
     zerg-pkg  # zergrush (macOS-only, from flakehub)
     zed-editor  # GUI editor; only useful on the desktop, not the headless devvms
   ];
@@ -343,39 +342,6 @@ in
         "undo confirmation selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
         "revset completion selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
         "evolog selected" = { bg = "#002f3c"; fg = "#fdf6e3"; };
-      };
-    };
-  };
-
-  #
-  # === Symlinks for other config files ===
-  #
-  
-  # OpenCode configuration
-  xdg.configFile."opencode" = {
-    source = ./opencode;
-    recursive = true;
-  };
-
-  #
-  # === Systemd User Services (non-developer Linux users) ===
-  #
-  systemd.user.services = lib.mkIf (isLinux && !isDeveloper) {
-    opencode-web = {
-      Unit = {
-        Description = "OpenCode web interface";
-        After = [ "network.target" "tailscaled.service" ];
-        Wants = [ "tailscaled.service" ];
-      };
-      Service = {
-        ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";  # Wait for tailscale to be ready
-        ExecStart = "${pkgs.bash}/bin/bash -c '${opencode-pkg}/bin/opencode web --port 4096 --hostname $(/run/current-system/sw/bin/tailscale ip -4)'";
-        Restart = "on-failure";
-        RestartSec = "5s";
-        Environment = "PATH=${config.home.profileDirectory}/bin:/run/current-system/sw/bin";
-      };
-      Install = {
-        WantedBy = [ "default.target" ];
       };
     };
   };
