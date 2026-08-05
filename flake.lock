@@ -1418,12 +1418,12 @@
         "vscode-server": "vscode-server"
       },
       "locked": {
-        "lastModified": 1785275394,
-        "narHash": "sha256-LOhDCZZijuZwsSNckpH1qtECo9MP7zZXEfbSu1e8YEE=",
-        "rev": "240e60e8ee95d9b7d29aef953c08095b8df6110e",
-        "revCount": 3396,
+        "lastModified": 1785971848,
+        "narHash": "sha256-Ie84YvFfIHMGfrKay6Re3+Z+b8vTwzm8ZGV4ZqID/MQ=",
+        "rev": "6eed8b1bd0a2cc47029399366c6c936861f0743c",
+        "revCount": 3450,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/replit/zergrush/0.1.3396%2Brev-240e60e8ee95d9b7d29aef953c08095b8df6110e/019faab5-832f-7212-9e96-ab6d0e3f8007/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/replit/zergrush/0.1.3450%2Brev-6eed8b1bd0a2cc47029399366c6c936861f0743c/019fd438-9422-7660-8043-8f8cbfdccd60/source.tar.gz"
       },
       "original": {
         "type": "tarball",
