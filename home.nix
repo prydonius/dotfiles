@@ -53,6 +53,9 @@ in
     stern
     k9s
     
+    # Infrastructure
+    terraform
+    
     # Other
     jujutsu  # jj version control
     jj-github-pkg  # jj GitHub integration

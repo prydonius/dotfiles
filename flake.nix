@@ -29,6 +29,9 @@
         let
           pkgs = import nixpkgs {
             inherit system;
+            # terraform is BUSL-licensed (unfree) from 1.6 onward; allow just it.
+            config.allowUnfreePredicate = pkg:
+              builtins.elem (nixpkgs.lib.getName pkg) [ "terraform" ];
           };
           isDarwinSystem = nixpkgs.lib.hasSuffix "darwin" system;
           # zergrush is macOS-only; null on Linux so home.nix can skip it.
