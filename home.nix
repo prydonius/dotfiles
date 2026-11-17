@@ -29,6 +29,9 @@ in
   # On macOS/other systems, run: chsh -s $(which zsh)
   home.sessionVariables.SHELL = "${pkgs.zsh}/bin/zsh";
 
+  # Personal scripts (e.g. the repl-it-web `elevate` wrapper)
+  home.sessionPath = [ "$HOME/bin" ];
+
   # Packages to install
   home.packages = with pkgs; [
     # Core utilities
