@@ -112,7 +112,10 @@ in
       # Better left<->right word navigation (bash-style)
       autoload -U select-word-style
       select-word-style bash
-      
+
+      # Allow # comments in interactive shell
+      setopt interactivecomments
+
       ${lib.optionalString isDarwin ''
       # macOS specific
       eval "$(/opt/homebrew/bin/brew shellenv)"
